@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -275,6 +274,7 @@ const Index = () => {
               question={currentQuestion}
               questionNumber={currentQuestionIndex + 1}
               totalQuestions={filteredQuestions.length}
+              userId={user?.id}
             />
           </div>
         ) : (
