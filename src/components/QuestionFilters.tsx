@@ -6,25 +6,25 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { QuestionFilters as IQuestionFilters } from "../types/Question";
-import { mockQuestions } from "../data/mockQuestions";
+import { QuestionFilters as IQuestionFilters, Question } from "../types/Question";
 
 interface QuestionFiltersProps {
   filters: IQuestionFilters;
   onFiltersChange: (filters: IQuestionFilters) => void;
   onClearFilters: () => void;
+  questions: Question[];
 }
 
-export const QuestionFilters = ({ filters, onFiltersChange, onClearFilters }: QuestionFiltersProps) => {
+export const QuestionFilters = ({ filters, onFiltersChange, onClearFilters, questions }: QuestionFiltersProps) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Extract unique values for filter options
   const uniqueValues = {
-    anos: [...new Set(mockQuestions.map(q => q.ano))].sort((a, b) => b - a),
-    bancas: [...new Set(mockQuestions.map(q => q.banca))].sort(),
-    disciplinas: [...new Set(mockQuestions.map(q => q.disciplina))].sort(),
-    assuntos: [...new Set(mockQuestions.map(q => q.assunto))].sort(),
-    orgaos: [...new Set(mockQuestions.map(q => q.orgao))].sort(),
+    anos: [...new Set(questions.map(q => q.ano))].sort((a, b) => b - a),
+    bancas: [...new Set(questions.map(q => q.banca))].sort(),
+    disciplinas: [...new Set(questions.map(q => q.disciplina))].sort(),
+    assuntos: [...new Set(questions.map(q => q.assunto))].sort(),
+    orgaos: [...new Set(questions.map(q => q.orgao))].sort(),
   };
 
   const handleCheckboxChange = (

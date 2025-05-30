@@ -1,15 +1,22 @@
-import { useState, useMemo } from "react";
+
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { QuestionFilters } from "../components/QuestionFilters";
 import { QuestionCard } from "../components/QuestionCard";
 import { StatsCard } from "../components/StatsCard";
 import { Question, QuestionFilters as IQuestionFilters } from "../types/Question";
-import { mockQuestions } from "../data/mockQuestions";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
   const [filters, setFilters] = useState<IQuestionFilters>({
     search: "",
     ano: [],
@@ -19,9 +26,63 @@ const Index = () => {
     orgao: []
   });
 
+  // Check for existing session and set up auth listener
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+        if (event === 'SIGNED_IN') {
+          toast({
+            title: "Login realizado com sucesso!",
+            description: "Bem-vindo à plataforma de questões.",
+          });
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [toast]);
+
+  // Fetch questions from Supabase
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  const fetchQuestions = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erro ao buscar questões:', error);
+        toast({
+          title: "Erro ao carregar questões",
+          description: "Não foi possível carregar as questões do banco de dados.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setQuestions(data || []);
+    } catch (error) {
+      console.error('Erro ao buscar questões:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Filter questions based on current filters
   const filteredQuestions = useMemo(() => {
-    return mockQuestions.filter(question => {
+    return questions.filter(question => {
       // Search filter
       if (filters.search && !question.comando.toLowerCase().includes(filters.search.toLowerCase()) && 
           !question.enunciado.toLowerCase().includes(filters.search.toLowerCase()) &&
@@ -39,10 +100,10 @@ const Index = () => {
 
       return true;
     });
-  }, [filters]);
+  }, [filters, questions]);
 
   // Reset current question index when filters change
-  useState(() => {
+  useEffect(() => {
     if (currentQuestionIndex >= filteredQuestions.length) {
       setCurrentQuestionIndex(0);
     }
@@ -74,28 +135,83 @@ const Index = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Erro ao fazer logout",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Logout realizado com sucesso!",
+        description: "Até logo!",
+      });
+    }
+  };
+
   // Stats
-  const uniqueDisciplines = new Set(mockQuestions.map(q => q.disciplina)).size;
-  const uniqueSubjects = new Set(mockQuestions.map(q => q.assunto)).size;
+  const uniqueDisciplines = new Set(questions.map(q => q.disciplina)).size;
+  const uniqueSubjects = new Set(questions.map(q => q.assunto)).size;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-police-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Carregando questões...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Header */}
       <div className="bg-gradient-to-r from-police-900 to-police-700 text-white py-8">
         <div className="container mx-auto px-4">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-2">Plataforma de Questões</h1>
-            <p className="text-police-200 text-lg">Concurso Polícia Federal</p>
-            <div className="flex justify-center gap-2 mt-4">
-              <Badge variant="secondary" className="bg-white/20 text-white">
-                🎯 Preparação para PF
-              </Badge>
-              <Badge variant="secondary" className="bg-white/20 text-white">
-                📚 Questões Comentadas
-              </Badge>
-              <Badge variant="secondary" className="bg-white/20 text-white">
-                🏆 Sistema Inteligente
-              </Badge>
+          <div className="flex justify-between items-center">
+            <div className="text-center flex-1">
+              <h1 className="text-4xl font-bold mb-2">Plataforma de Questões</h1>
+              <p className="text-police-200 text-lg">Concurso Polícia Federal</p>
+              <div className="flex justify-center gap-2 mt-4">
+                <Badge variant="secondary" className="bg-white/20 text-white">
+                  🎯 Preparação para PF
+                </Badge>
+                <Badge variant="secondary" className="bg-white/20 text-white">
+                  📚 Questões Comentadas
+                </Badge>
+                <Badge variant="secondary" className="bg-white/20 text-white">
+                  🏆 Sistema Inteligente
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-sm text-police-200">Logado como:</p>
+                    <p className="font-medium">{user.email}</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleSignOut}
+                    className="border-white text-white hover:bg-white hover:text-police-800"
+                  >
+                    Sair
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.location.href = '/auth'}
+                  className="border-white text-white hover:bg-white hover:text-police-800"
+                >
+                  Entrar
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -104,7 +220,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Stats */}
         <StatsCard
-          totalQuestions={mockQuestions.length}
+          totalQuestions={questions.length}
           filteredQuestions={filteredQuestions.length}
           uniqueDisciplines={uniqueDisciplines}
           uniqueSubjects={uniqueSubjects}
@@ -115,6 +231,7 @@ const Index = () => {
           filters={filters}
           onFiltersChange={setFilters}
           onClearFilters={clearFilters}
+          questions={questions}
         />
 
         {/* Question Display */}
