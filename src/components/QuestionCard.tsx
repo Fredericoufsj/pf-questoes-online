@@ -27,7 +27,7 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [answered, setAnswered] = useState(false);
-  const [userAnswer, setUserAnswer] = useState<UserAnswer | null>(null);
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const { toast } = useToast();
 
   // Reset states when question changes
@@ -35,15 +35,15 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
     setSelectedAnswer("");
     setShowAnswer(false);
     setAnswered(false);
-    setUserAnswer(null);
+    setUserAnswers([]);
     
     // Check if user has already answered this question
     if (userId) {
-      checkUserAnswer();
+      checkUserAnswers();
     }
   }, [question.id, userId]);
 
-  const checkUserAnswer = async () => {
+  const checkUserAnswers = async () => {
     if (!userId) return;
 
     try {
@@ -52,18 +52,18 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
         .select('user_answer, is_correct, answered_at')
         .eq('user_id', userId)
         .eq('question_id', question.id)
-        .maybeSingle();
+        .order('answered_at', { ascending: false });
 
       if (error) {
-        console.error('Erro ao buscar resposta do usuário:', error);
+        console.error('Erro ao buscar respostas do usuário:', error);
         return;
       }
 
-      if (data) {
-        setUserAnswer(data);
+      if (data && data.length > 0) {
+        setUserAnswers(data);
       }
     } catch (error) {
-      console.error('Erro ao verificar resposta:', error);
+      console.error('Erro ao verificar respostas:', error);
     }
   };
 
@@ -79,7 +79,7 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
       try {
         const { error } = await supabase
           .from('user_answers')
-          .upsert({
+          .insert({
             user_id: userId,
             question_id: question.id,
             user_answer: selectedAnswer,
@@ -94,12 +94,13 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
             variant: "destructive"
           });
         } else {
-          // Update local state
-          setUserAnswer({
+          // Update local state with new answer
+          const newAnswer = {
             user_answer: selectedAnswer,
             is_correct: isCorrect,
             answered_at: new Date().toISOString()
-          });
+          };
+          setUserAnswers(prev => [newAnswer, ...prev]);
         }
       } catch (error) {
         console.error('Erro ao salvar resposta:', error);
@@ -107,7 +108,41 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
     }
   };
 
+  const handleTryAgain = () => {
+    setSelectedAnswer("");
+    setShowAnswer(false);
+    setAnswered(false);
+  };
+
   const isCorrect = selectedAnswer === question.resposta_correta;
+  const hasAnswered = userAnswers.length > 0;
+  const lastAnswer = userAnswers[0];
+
+  const renderTooltipContent = () => {
+    if (userAnswers.length === 0) return null;
+
+    return (
+      <div className="space-y-2">
+        <p className="font-semibold">Histórico de tentativas:</p>
+        {userAnswers.map((answer, index) => (
+          <div key={index} className="text-sm border-b border-gray-200 pb-1 last:border-b-0">
+            <div className="flex items-center gap-2">
+              <span className={answer.is_correct ? "text-green-600" : "text-red-600"}>
+                {answer.is_correct ? "✅" : "❌"}
+              </span>
+              <span>Resposta: {answer.user_answer}</span>
+            </div>
+            <div className="text-xs text-gray-500">
+              {new Date(answer.answered_at).toLocaleString('pt-BR')}
+            </div>
+          </div>
+        ))}
+        <div className="text-xs text-gray-600 pt-1">
+          Total de tentativas: {userAnswers.length}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <TooltipProvider>
@@ -122,28 +157,22 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
                 <Badge variant="secondary" className="bg-white/20 text-white">
                   {question.id}
                 </Badge>
-                {userAnswer && (
-                  <Tooltip>
+                {hasAnswered && (
+                  <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <Badge 
                         variant="secondary" 
-                        className={`${
-                          userAnswer.is_correct 
-                            ? "bg-green-500/80 text-white" 
-                            : "bg-red-500/80 text-white"
+                        className={`cursor-help ${
+                          lastAnswer.is_correct 
+                            ? "bg-green-500/80 text-white hover:bg-green-600/80" 
+                            : "bg-red-500/80 text-white hover:bg-red-600/80"
                         }`}
                       >
-                        {userAnswer.is_correct ? "✅ Respondida" : "❌ Respondida"}
+                        {lastAnswer.is_correct ? "✅ Respondida" : "❌ Respondida"} ({userAnswers.length}x)
                       </Badge>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Respondida em: {new Date(userAnswer.answered_at).toLocaleString('pt-BR')}
-                        <br />
-                        Sua resposta: {userAnswer.user_answer}
-                        <br />
-                        {userAnswer.is_correct ? "Resposta correta!" : "Resposta incorreta"}
-                      </p>
+                    <TooltipContent side="bottom" className="max-w-sm">
+                      {renderTooltipContent()}
                     </TooltipContent>
                   </Tooltip>
                 )}
@@ -252,25 +281,36 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
 
           {/* Answer and Explanation */}
           {showAnswer && (
-            <div className="mt-6 p-6 rounded-lg border-l-4 animate-fade-in" style={{
-              borderLeftColor: isCorrect ? "#10b981" : "#ef4444",
-              backgroundColor: isCorrect ? "#f0fdf4" : "#fef2f2"
-            }}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`text-lg font-bold ${isCorrect ? "text-green-700" : "text-red-700"}`}>
-                  {isCorrect ? "✅ Correto!" : "❌ Incorreto!"}
-                </span>
-                <Badge 
-                  variant={isCorrect ? "default" : "destructive"}
-                  className={isCorrect ? "bg-green-500" : ""}
-                >
-                  Resposta: {question.resposta_correta}
-                </Badge>
+            <div className="mt-6 space-y-4">
+              <div className="p-6 rounded-lg border-l-4 animate-fade-in" style={{
+                borderLeftColor: isCorrect ? "#10b981" : "#ef4444",
+                backgroundColor: isCorrect ? "#f0fdf4" : "#fef2f2"
+              }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className={`text-lg font-bold ${isCorrect ? "text-green-700" : "text-red-700"}`}>
+                    {isCorrect ? "✅ Correto!" : "❌ Incorreto!"}
+                  </span>
+                  <Badge 
+                    variant={isCorrect ? "default" : "destructive"}
+                    className={isCorrect ? "bg-green-500" : ""}
+                  >
+                    Resposta: {question.resposta_correta}
+                  </Badge>
+                </div>
+                <div className="text-gray-700">
+                  <h4 className="font-medium mb-2">Comentário:</h4>
+                  <p className="leading-relaxed">{question.comentario}</p>
+                </div>
               </div>
-              <div className="text-gray-700">
-                <h4 className="font-medium mb-2">Comentário:</h4>
-                <p className="leading-relaxed">{question.comentario}</p>
-              </div>
+
+              {/* Try Again Button */}
+              <Button 
+                onClick={handleTryAgain}
+                variant="outline"
+                className="w-full border-police-200 text-police-700 hover:bg-police-50"
+              >
+                Tentar Novamente
+              </Button>
             </div>
           )}
         </CardContent>
