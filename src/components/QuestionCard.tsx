@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Question } from "../types/Question";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { AnswerHistoryModal } from "./AnswerHistoryModal";
 
 interface QuestionCardProps {
   question: Question;
@@ -28,6 +28,7 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
   const [showAnswer, setShowAnswer] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const { toast } = useToast();
 
   // Reset states when question changes
@@ -114,38 +115,18 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
     setAnswered(false);
   };
 
+  const handleBadgeClick = () => {
+    if (userAnswers.length > 0) {
+      setShowHistoryModal(true);
+    }
+  };
+
   const isCorrect = selectedAnswer === question.resposta_correta;
   const hasAnswered = userAnswers.length > 0;
   const lastAnswer = userAnswers[0];
 
-  const renderTooltipContent = () => {
-    if (userAnswers.length === 0) return null;
-
-    return (
-      <div className="space-y-2">
-        <p className="font-semibold">Histórico de tentativas:</p>
-        {userAnswers.map((answer, index) => (
-          <div key={index} className="text-sm border-b border-gray-200 pb-1 last:border-b-0">
-            <div className="flex items-center gap-2">
-              <span className={answer.is_correct ? "text-green-600" : "text-red-600"}>
-                {answer.is_correct ? "✅" : "❌"}
-              </span>
-              <span>Resposta: {answer.user_answer}</span>
-            </div>
-            <div className="text-xs text-gray-500">
-              {new Date(answer.answered_at).toLocaleString('pt-BR')}
-            </div>
-          </div>
-        ))}
-        <div className="text-xs text-gray-600 pt-1">
-          Total de tentativas: {userAnswers.length}
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <TooltipProvider>
+    <>
       <Card className="w-full max-w-4xl mx-auto shadow-xl border-0 bg-gradient-to-br from-white to-gray-50 animate-fade-in">
         <CardHeader className="bg-gradient-to-r from-police-800 to-police-600 text-white rounded-t-lg">
           <div className="flex justify-between items-start">
@@ -158,23 +139,18 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
                   {question.id}
                 </Badge>
                 {hasAnswered && (
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Badge 
-                        variant="secondary" 
-                        className={`cursor-help ${
-                          lastAnswer.is_correct 
-                            ? "bg-green-500/80 text-white hover:bg-green-600/80" 
-                            : "bg-red-500/80 text-white hover:bg-red-600/80"
-                        }`}
-                      >
-                        {lastAnswer.is_correct ? "✅ Respondida" : "❌ Respondida"} ({userAnswers.length}x)
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="max-w-sm">
-                      {renderTooltipContent()}
-                    </TooltipContent>
-                  </Tooltip>
+                  <Badge 
+                    variant="secondary" 
+                    className={`cursor-pointer transition-all hover:scale-105 ${
+                      lastAnswer.is_correct 
+                        ? "bg-green-500/80 text-white hover:bg-green-600/80" 
+                        : "bg-red-500/80 text-white hover:bg-red-600/80"
+                    }`}
+                    onClick={handleBadgeClick}
+                    title="Clique para ver o histórico completo"
+                  >
+                    {lastAnswer.is_correct ? "✅" : "❌"} Respondida ({userAnswers.length}x)
+                  </Badge>
                 )}
               </div>
               <div className="flex flex-wrap gap-2 text-sm">
@@ -315,6 +291,14 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
           )}
         </CardContent>
       </Card>
-    </TooltipProvider>
+
+      {/* Answer History Modal */}
+      <AnswerHistoryModal
+        isOpen={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        userAnswers={userAnswers}
+        questionId={question.id}
+      />
+    </>
   );
 };
