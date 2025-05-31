@@ -119,6 +119,48 @@ export type Database = {
           },
         ]
       }
+      user_performance_stats: {
+        Row: {
+          accuracy_percentage: number | null
+          assunto: string
+          correct_answers: number | null
+          created_at: string | null
+          disciplina: string
+          id: string
+          incorrect_answers: number | null
+          last_answered_at: string | null
+          total_questions: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accuracy_percentage?: number | null
+          assunto: string
+          correct_answers?: number | null
+          created_at?: string | null
+          disciplina: string
+          id?: string
+          incorrect_answers?: number | null
+          last_answered_at?: string | null
+          total_questions?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accuracy_percentage?: number | null
+          assunto?: string
+          correct_answers?: number | null
+          created_at?: string | null
+          disciplina?: string
+          id?: string
+          incorrect_answers?: number | null
+          last_answered_at?: string | null
+          total_questions?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

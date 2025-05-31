@@ -190,6 +190,13 @@ const Index = () => {
             <div className="flex items-center gap-4">
               {user ? (
                 <div className="flex items-center gap-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => window.location.href = '/statistics'}
+                    className="border-white text-white hover:bg-white hover:text-police-800"
+                  >
+                    📊 Estatísticas
+                  </Button>
                   <div className="text-right">
                     <p className="text-sm text-police-200">Logado como:</p>
                     <p className="font-medium">{user.email}</p>
