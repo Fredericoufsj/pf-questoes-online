@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,10 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { QuestionFilters } from "../components/QuestionFilters";
 import { QuestionCard } from "../components/QuestionCard";
 import { StatsCard } from "../components/StatsCard";
+import { SubscriptionBanner } from "../components/SubscriptionBanner";
 import { Question, QuestionFilters as IQuestionFilters } from "../types/Question";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
+import { useSubscription } from "../hooks/useSubscription";
+import { Crown } from "lucide-react";
 
 const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -25,6 +29,16 @@ const Index = () => {
     orgao: []
   });
 
+  const { 
+    subscription, 
+    dailyUsage,
+    loading: subscriptionLoading,
+    checkSubscription,
+    fetchDailyUsage,
+    canAccessQuestion,
+    getRemainingQuestions
+  } = useSubscription(user);
+
   // Check for existing session and set up auth listener
   useEffect(() => {
     // Get initial session
@@ -33,7 +47,7 @@ const Index = () => {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
         if (event === 'SIGNED_IN') {
@@ -45,7 +59,7 @@ const Index = () => {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => authSubscription.unsubscribe();
   }, [toast]);
 
   // Fetch questions from Supabase
@@ -150,9 +164,39 @@ const Index = () => {
     }
   };
 
+  const handleUpgradeClick = async () => {
+    if (!user) {
+      toast({
+        title: "Login necessário",
+        description: "Faça login para acessar o plano premium.",
+        variant: "destructive"
+      });
+      window.location.href = '/auth';
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout');
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Erro ao criar checkout:', error);
+      toast({
+        title: "Erro ao processar pagamento",
+        description: "Não foi possível iniciar o processo de pagamento.",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Stats
   const uniqueDisciplines = new Set(questions.map(q => q.disciplina)).size;
   const uniqueSubjects = new Set(questions.map(q => q.assunto)).size;
+
+  const remainingQuestions = getRemainingQuestions();
 
   if (loading) {
     return (
@@ -200,6 +244,12 @@ const Index = () => {
                   <div className="text-right">
                     <p className="text-sm text-police-200">Logado como:</p>
                     <p className="font-medium">{user.email}</p>
+                    {subscription.subscription_tier === 'premium' && (
+                      <Badge className="bg-yellow-500 text-yellow-900 mt-1">
+                        <Crown className="h-3 w-3 mr-1" />
+                        Premium
+                      </Badge>
+                    )}
                   </div>
                   <Button 
                     variant="outline" 
@@ -224,6 +274,15 @@ const Index = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Subscription Banner */}
+        {user && (
+          <SubscriptionBanner
+            subscription={subscription}
+            remainingQuestions={remainingQuestions}
+            onUpgrade={handleUpgradeClick}
+          />
+        )}
+
         {/* Stats */}
         <StatsCard
           totalQuestions={questions.length}
@@ -243,46 +302,72 @@ const Index = () => {
         {/* Question Display */}
         {filteredQuestions.length > 0 ? (
           <div className="space-y-6">
-            {/* Navigation */}
-            <div className="flex justify-between items-center">
-              <Button
-                variant="outline"
-                onClick={goToPreviousQuestion}
-                disabled={currentQuestionIndex === 0}
-                className="border-police-200 text-police-700 hover:bg-police-50"
-              >
-                ← Anterior
-              </Button>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  Questão {currentQuestionIndex + 1} de {filteredQuestions.length}
-                </span>
-                <div className="w-32 bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-police-600 to-police-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${((currentQuestionIndex + 1) / filteredQuestions.length) * 100}%` }}
-                  />
+            {/* Check access before showing question */}
+            {user && !canAccessQuestion() ? (
+              <Card className="text-center py-12 border-red-200 bg-red-50">
+                <CardContent>
+                  <div className="text-red-600 mb-4">
+                    <div className="text-6xl mb-4">🔒</div>
+                    <h3 className="text-xl font-medium text-red-700 mb-2">
+                      Limite de questões atingido
+                    </h3>
+                    <p className="text-red-600 mb-4">
+                      Você já respondeu 10 questões hoje. Faça upgrade para o Premium e tenha acesso ilimitado!
+                    </p>
+                    <Button 
+                      onClick={handleUpgradeClick}
+                      className="bg-gradient-to-r from-police-600 to-police-500 hover:from-police-700 hover:to-police-600"
+                    >
+                      <Crown className="h-4 w-4 mr-2" />
+                      Upgrade para Premium - R$ 6,49/mês
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Navigation */}
+                <div className="flex justify-between items-center">
+                  <Button
+                    variant="outline"
+                    onClick={goToPreviousQuestion}
+                    disabled={currentQuestionIndex === 0}
+                    className="border-police-200 text-police-700 hover:bg-police-50"
+                  >
+                    ← Anterior
+                  </Button>
+                  
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">
+                      Questão {currentQuestionIndex + 1} de {filteredQuestions.length}
+                    </span>
+                    <div className="w-32 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-police-600 to-police-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((currentQuestionIndex + 1) / filteredQuestions.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    onClick={goToNextQuestion}
+                    disabled={currentQuestionIndex === filteredQuestions.length - 1}
+                    className="border-police-200 text-police-700 hover:bg-police-50"
+                  >
+                    Próxima →
+                  </Button>
                 </div>
-              </div>
 
-              <Button
-                variant="outline"
-                onClick={goToNextQuestion}
-                disabled={currentQuestionIndex === filteredQuestions.length - 1}
-                className="border-police-200 text-police-700 hover:bg-police-50"
-              >
-                Próxima →
-              </Button>
-            </div>
-
-            {/* Current Question */}
-            <QuestionCard
-              question={currentQuestion}
-              questionNumber={currentQuestionIndex + 1}
-              totalQuestions={filteredQuestions.length}
-              userId={user?.id}
-            />
+                {/* Current Question */}
+                <QuestionCard
+                  question={currentQuestion}
+                  questionNumber={currentQuestionIndex + 1}
+                  totalQuestions={filteredQuestions.length}
+                  userId={user?.id}
+                />
+              </>
+            )}
           </div>
         ) : (
           <Card className="text-center py-12">
