@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ interface QuestionCardProps {
   questionNumber: number;
   totalQuestions: number;
   userId?: string;
+  fetchDailyUsage?: () => void;
 }
 
 interface UserAnswer {
@@ -23,7 +23,7 @@ interface UserAnswer {
   answered_at: string;
 }
 
-export const QuestionCard = ({ question, questionNumber, totalQuestions, userId }: QuestionCardProps) => {
+export const QuestionCard = ({ question, questionNumber, totalQuestions, userId, fetchDailyUsage }: QuestionCardProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [answered, setAnswered] = useState(false);
@@ -102,6 +102,8 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId 
             answered_at: new Date().toISOString()
           };
           setUserAnswers(prev => [newAnswer, ...prev]);
+          // Update daily usage after saving the answer
+          if (fetchDailyUsage) fetchDailyUsage();
         }
       } catch (error) {
         console.error('Erro ao salvar resposta:', error);
