@@ -20,7 +20,7 @@ interface Achievement {
   name: string;
   description: string;
   icon: string;
-  type: 'bronze' | 'silver' | 'gold' | 'platinum';
+  type: string; // Changed from union type to string
   requirement_type: string;
   requirement_value: number;
   points_reward: number;
@@ -41,7 +41,7 @@ interface RankingUser {
   profiles?: {
     email: string;
     full_name: string;
-  };
+  } | null;
 }
 
 export const useGamification = (user: User | null) => {
@@ -117,27 +117,36 @@ export const useGamification = (user: User | null) => {
 
   const fetchRanking = async () => {
     try {
-      const { data, error } = await supabase
+      // First get user_points data
+      const { data: userPointsData, error: pointsError } = await supabase
         .from('user_points')
-        .select(`
-          user_id,
-          total_points,
-          correct_answers,
-          total_answers,
-          profiles:user_id (
-            email,
-            full_name
-          )
-        `)
+        .select('user_id, total_points, correct_answers, total_answers')
         .order('total_points', { ascending: false })
         .limit(10);
 
-      if (error) {
-        console.error('Erro ao buscar ranking:', error);
+      if (pointsError) {
+        console.error('Erro ao buscar ranking:', pointsError);
         return;
       }
 
-      setRanking(data || []);
+      // Then get profiles data separately
+      const userIds = userPointsData?.map(up => up.user_id) || [];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, email, full_name')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Erro ao buscar perfis:', profilesError);
+      }
+
+      // Combine the data
+      const rankingData = userPointsData?.map(userPoint => ({
+        ...userPoint,
+        profiles: profilesData?.find(profile => profile.id === userPoint.user_id) || null
+      })) || [];
+
+      setRanking(rankingData);
     } catch (error) {
       console.error('Erro ao buscar ranking:', error);
     }

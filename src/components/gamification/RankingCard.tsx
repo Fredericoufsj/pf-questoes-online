@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, Award } from "lucide-react";
@@ -11,7 +10,7 @@ interface RankingUser {
   profiles?: {
     email: string;
     full_name: string;
-  };
+  } | null; // Made profiles optional and nullable
 }
 
 interface RankingCardProps {

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,7 +9,7 @@ interface Achievement {
   name: string;
   description: string;
   icon: string;
-  type: 'bronze' | 'silver' | 'gold' | 'platinum';
+  type: string; // Changed from union type to string
   requirement_type: string;
   requirement_value: number;
   points_reward: number;
