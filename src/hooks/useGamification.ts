@@ -20,7 +20,7 @@ interface Achievement {
   name: string;
   description: string;
   icon: string;
-  type: string; // Changed from union type to string
+  type: string;
   requirement_type: string;
   requirement_value: number;
   points_reward: number;
@@ -117,7 +117,6 @@ export const useGamification = (user: User | null) => {
 
   const fetchRanking = async () => {
     try {
-      // First get user_points data
       const { data: userPointsData, error: pointsError } = await supabase
         .from('user_points')
         .select('user_id, total_points, correct_answers, total_answers')
@@ -129,7 +128,6 @@ export const useGamification = (user: User | null) => {
         return;
       }
 
-      // Then get profiles data separately
       const userIds = userPointsData?.map(up => up.user_id) || [];
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
@@ -140,7 +138,6 @@ export const useGamification = (user: User | null) => {
         console.error('Erro ao buscar perfis:', profilesError);
       }
 
-      // Combine the data
       const rankingData = userPointsData?.map(userPoint => ({
         ...userPoint,
         profiles: profilesData?.find(profile => profile.id === userPoint.user_id) || null
@@ -169,7 +166,6 @@ export const useGamification = (user: User | null) => {
   const checkForNewAchievements = async () => {
     if (!user || !userPoints) return;
 
-    // Verificar se há novas conquistas
     const currentAchievementIds = userAchievements.map(ua => ua.achievement_id);
     
     const potentialAchievements = achievements.filter(achievement => {
@@ -189,14 +185,37 @@ export const useGamification = (user: User | null) => {
       }
     });
 
-    // Mostrar notificação para novas conquistas
-    if (potentialAchievements.length > 0) {
-      potentialAchievements.forEach(achievement => {
-        toast({
-          title: "🏆 Nova Conquista Desbloqueada!",
-          description: `${achievement.icon} ${achievement.name} - ${achievement.description}`,
-        });
-      });
+    // Salvar novas conquistas no banco de dados
+    for (const achievement of potentialAchievements) {
+      try {
+        const { error } = await supabase
+          .from('user_achievements')
+          .insert({
+            user_id: user.id,
+            achievement_id: achievement.id
+          });
+
+        if (error) {
+          console.error('Erro ao salvar conquista:', error);
+        } else {
+          // Mostrar notificação apenas se a conquista foi salva com sucesso
+          toast({
+            title: "🏆 Nova Conquista Desbloqueada!",
+            description: `${achievement.icon} ${achievement.name} - ${achievement.description}`,
+          });
+
+          // Atualizar a lista local de conquistas do usuário
+          const newUserAchievement = {
+            id: '', // Será preenchido pelo banco
+            achievement_id: achievement.id,
+            earned_at: new Date().toISOString(),
+            achievement: achievement
+          };
+          setUserAchievements(prev => [newUserAchievement, ...prev]);
+        }
+      } catch (error) {
+        console.error('Erro ao salvar conquista:', error);
+      }
     }
   };
 
