@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "../hooks/useSubscription";
-import { Crown } from "lucide-react";
+import { useGamification } from "../hooks/useGamification";
+import { Crown, Trophy, Award } from "lucide-react";
 
 const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -37,6 +39,8 @@ const Index = () => {
     canAccessQuestion,
     getRemainingQuestions
   } = useSubscription(user);
+
+  const { userPoints, fetchUserPoints } = useGamification(user);
 
   // Check for existing session and set up auth listener
   useEffect(() => {
@@ -191,6 +195,11 @@ const Index = () => {
     }
   };
 
+  const handleQuestionAnswered = () => {
+    fetchDailyUsage();
+    fetchUserPoints();
+  };
+
   // Stats
   const uniqueDisciplines = new Set(questions.map(q => q.disciplina)).size;
   const uniqueSubjects = new Set(questions.map(q => q.assunto)).size;
@@ -235,6 +244,13 @@ const Index = () => {
                 <div className="flex items-center gap-4">
                   <Button 
                     variant="outline" 
+                    onClick={() => window.location.href = '/gamification'}
+                    className="border-white text-white hover:bg-white hover:text-police-800"
+                  >
+                    🎮 Gamificação
+                  </Button>
+                  <Button 
+                    variant="outline" 
                     onClick={() => window.location.href = '/statistics'}
                     className="border-white text-white hover:bg-white hover:text-police-800"
                   >
@@ -243,12 +259,20 @@ const Index = () => {
                   <div className="text-right">
                     <p className="text-sm text-police-200">Logado como:</p>
                     <p className="font-medium">{user.email}</p>
-                    {subscription.subscription_tier === 'premium' && (
-                      <Badge className="bg-yellow-500 text-yellow-900 mt-1">
-                        <Crown className="h-3 w-3 mr-1" />
-                        Premium
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-2 mt-1">
+                      {subscription.subscription_tier === 'premium' && (
+                        <Badge className="bg-yellow-500 text-yellow-900">
+                          <Crown className="h-3 w-3 mr-1" />
+                          Premium
+                        </Badge>
+                      )}
+                      {userPoints && (
+                        <Badge variant="secondary" className="bg-white/20 text-white">
+                          <Trophy className="h-3 w-3 mr-1" />
+                          {userPoints.total_points} pts
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   <Button 
                     variant="outline" 
@@ -364,7 +388,7 @@ const Index = () => {
                   questionNumber={currentQuestionIndex + 1}
                   totalQuestions={filteredQuestions.length}
                   userId={user?.id}
-                  fetchDailyUsage={fetchDailyUsage}
+                  fetchDailyUsage={handleQuestionAnswered}
                 />
               </>
             )}
