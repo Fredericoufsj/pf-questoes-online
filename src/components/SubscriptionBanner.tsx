@@ -127,7 +127,7 @@ export const SubscriptionBanner = ({
                 </Badge>
               </div>
               <p className="text-sm text-blue-700">
-                Aproveite o Premium por apenas R$ 6,49/mês e tenha acesso ilimitado!
+                Aproveite o Premium por apenas R$ 14,49/mês e tenha acesso ilimitado!
               </p>
             </div>
           </div>

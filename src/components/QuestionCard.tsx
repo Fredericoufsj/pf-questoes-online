@@ -71,43 +71,51 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId,
   const handleSubmitAnswer = async () => {
     if (!selectedAnswer) return;
 
+    // Verificar se o usuário está logado
+    if (!userId) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para responder questões.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const isCorrect = selectedAnswer === question.resposta_correta;
     setAnswered(true);
     setShowAnswer(true);
 
     // Save user answer if logged in
-    if (userId) {
-      try {
-        const { error } = await supabase
-          .from('user_answers')
-          .insert({
-            user_id: userId,
-            question_id: question.id,
-            user_answer: selectedAnswer,
-            is_correct: isCorrect
-          });
+    try {
+      const { error } = await supabase
+        .from('user_answers')
+        .insert({
+          user_id: userId,
+          question_id: question.id,
+          user_answer: selectedAnswer,
+          is_correct: isCorrect
+        });
 
-        if (error) {
-          console.error('Erro ao salvar resposta:', error);
-          toast({
-            title: "Erro",
-            description: "Não foi possível salvar sua resposta.",
-            variant: "destructive"
-          });
-        } else {
-          // Update local state with new answer
-          const newAnswer = {
-            user_answer: selectedAnswer,
-            is_correct: isCorrect,
-            answered_at: new Date().toISOString()
-          };
-          setUserAnswers(prev => [newAnswer, ...prev]);
-          // Update daily usage after saving the answer
-          if (fetchDailyUsage) fetchDailyUsage();
-        }
-      } catch (error) {
+      if (error) {
         console.error('Erro ao salvar resposta:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível salvar sua resposta.",
+          variant: "destructive"
+        });
+      } else {
+        // Update local state with new answer
+        const newAnswer = {
+          user_answer: selectedAnswer,
+          is_correct: isCorrect,
+          answered_at: new Date().toISOString()
+        };
+        setUserAnswers(prev => [newAnswer, ...prev]);
+        // Update daily usage after saving the answer
+        if (fetchDailyUsage) fetchDailyUsage();
       }
+    } catch (error) {
+      console.error('Erro ao salvar resposta:', error);
     }
   };
 
@@ -250,10 +258,10 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId,
           {!answered && (
             <Button 
               onClick={handleSubmitAnswer}
-              disabled={!selectedAnswer}
+              disabled={!selectedAnswer || !userId}
               className="w-full bg-gradient-to-r from-police-600 to-police-500 hover:from-police-700 hover:to-police-600 text-white font-medium py-3"
             >
-              Responder
+              {!userId ? "Faça login para responder" : "Responder"}
             </Button>
           )}
 

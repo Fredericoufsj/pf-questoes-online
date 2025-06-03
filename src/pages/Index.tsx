@@ -245,14 +245,14 @@ const Index = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => window.location.href = '/gamification'}
-                    className="border-white text-white hover:bg-white hover:text-police-800"
+                    className="border-white text-white hover:bg-white hover:text-police-800 bg-transparent"
                   >
                     🎮 Gamificação
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => window.location.href = '/statistics'}
-                    className="border-white text-white hover:bg-white hover:text-police-800"
+                    className="border-white text-white hover:bg-white hover:text-police-800 bg-transparent"
                   >
                     📊 Estatísticas
                   </Button>
@@ -277,7 +277,7 @@ const Index = () => {
                   <Button 
                     variant="outline" 
                     onClick={handleSignOut}
-                    className="border-white text-white hover:bg-white hover:text-police-800"
+                    className="border-white text-white hover:bg-white hover:text-police-800 bg-transparent"
                   >
                     Sair
                   </Button>
@@ -286,7 +286,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => window.location.href = '/auth'}
-                  className="border-white text-white hover:bg-white hover:text-police-800"
+                  className="border-white text-white hover:bg-white hover:text-police-800 bg-transparent"
                 >
                   Entrar
                 </Button>
@@ -342,7 +342,7 @@ const Index = () => {
                       className="bg-gradient-to-r from-police-600 to-police-500 hover:from-police-700 hover:to-police-600"
                     >
                       <Crown className="h-4 w-4 mr-2" />
-                      Upgrade para Premium - R$ 6,49/mês
+                      Upgrade para Premium - R$ 14,49/mês
                     </Button>
                   </div>
                 </CardContent>
