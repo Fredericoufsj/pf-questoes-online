@@ -262,7 +262,7 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId,
           {!answered && (
             <Button 
               onClick={handleSubmitAnswer}
-              disabled={!selectedAnswer || !userId}
+              disabled={userId && !selectedAnswer}
               className="w-full bg-gradient-to-r from-police-600 to-police-500 hover:from-police-700 hover:to-police-600 text-white font-medium py-3"
             >
               {!userId ? "Faça login para responder" : "Responder"}
