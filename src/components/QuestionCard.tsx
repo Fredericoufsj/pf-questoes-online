@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { AnswerHistoryModal } from "./AnswerHistoryModal";
 import { QuestionStudySuggestion } from "./QuestionStudySuggestion";
+import { QuestionExplanation } from "./QuestionExplanation";
 
 interface QuestionCardProps {
   question: Question;
@@ -290,12 +291,15 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId,
                 </div>
               </div>
 
-              {/* Novo componente de sugestões de estudo */}
+              {/* Componente de sugestões de estudo */}
               <QuestionStudySuggestion 
                 disciplina={question.disciplina}
                 assunto={question.assunto}
                 isCorrect={isCorrect}
               />
+
+              {/* Novo componente de explicação com IA */}
+              <QuestionExplanation question={question} />
 
               {/* Try Again Button */}
               <Button 
