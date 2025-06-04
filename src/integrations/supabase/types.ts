@@ -72,6 +72,45 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_statistics: {
+        Row: {
+          assunto: string
+          created_at: string
+          disciplina: string
+          exam_type: string
+          exam_year: number
+          id: string
+          percentage: number
+          priority_level: string
+          total_questions: number
+          updated_at: string
+        }
+        Insert: {
+          assunto: string
+          created_at?: string
+          disciplina: string
+          exam_type?: string
+          exam_year: number
+          id?: string
+          percentage?: number
+          priority_level: string
+          total_questions?: number
+          updated_at?: string
+        }
+        Update: {
+          assunto?: string
+          created_at?: string
+          disciplina?: string
+          exam_type?: string
+          exam_year?: number
+          id?: string
+          percentage?: number
+          priority_level?: string
+          total_questions?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -144,6 +183,42 @@ export type Database = {
           prova?: string
           resposta_correta?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      study_suggestions: {
+        Row: {
+          assunto: string
+          created_at: string
+          disciplina: string
+          id: string
+          priority_score: number
+          reason: string
+          suggestion_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assunto: string
+          created_at?: string
+          disciplina: string
+          id?: string
+          priority_score?: number
+          reason: string
+          suggestion_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assunto?: string
+          created_at?: string
+          disciplina?: string
+          id?: string
+          priority_score?: number
+          reason?: string
+          suggestion_type?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -333,7 +408,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_study_suggestions: {
+        Args: { target_user_id: string }
+        Returns: {
+          disciplina: string
+          assunto: string
+          suggestion_type: string
+          priority_score: number
+          reason: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

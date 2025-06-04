@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -255,6 +254,13 @@ const Index = () => {
                     className="border-white text-white hover:bg-white hover:text-police-800 bg-transparent"
                   >
                     📊 Estatísticas
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => window.location.href = '/study-suggestions'}
+                    className="border-white text-white hover:bg-white hover:text-police-800 bg-transparent"
+                  >
+                    🎯 Sugestões
                   </Button>
                   <div className="text-right">
                     <p className="text-sm text-police-200">Logado como:</p>
