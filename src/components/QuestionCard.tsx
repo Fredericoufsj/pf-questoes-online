@@ -80,6 +80,8 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId,
         description: "Você precisa estar logado para responder questões.",
         variant: "destructive"
       });
+      // Redirect to auth page
+      window.location.href = '/auth';
       return;
     }
 
