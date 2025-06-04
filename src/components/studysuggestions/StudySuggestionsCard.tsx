@@ -8,7 +8,7 @@ interface StudySuggestion {
   id: string;
   disciplina: string;
   assunto: string;
-  suggestion_type: 'weak_area' | 'high_priority' | 'recommended';
+  suggestion_type: string; // Changed from union type to string
   priority_score: number;
   reason: string;
 }

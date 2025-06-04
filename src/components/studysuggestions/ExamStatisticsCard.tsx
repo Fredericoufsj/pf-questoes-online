@@ -8,7 +8,7 @@ interface ExamStatistic {
   assunto: string;
   total_questions: number;
   percentage: number;
-  priority_level: 'alta' | 'media' | 'baixa';
+  priority_level: string; // Changed from union type to string
   exam_year: number;
 }
 
@@ -58,8 +58,8 @@ export const ExamStatisticsCard = ({ examStats, getPriorityColor }: ExamStatisti
             return (
               <div key={priority} className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">{priorityIcons[priority]}</span>
-                  <h3 className="font-semibold text-lg">{priorityLabels[priority]}</h3>
+                  <span className="text-lg">{priorityIcons[priority as keyof typeof priorityIcons]}</span>
+                  <h3 className="font-semibold text-lg">{priorityLabels[priority as keyof typeof priorityLabels]}</h3>
                   <Badge variant="outline">{stats.length} disciplinas</Badge>
                 </div>
                 
