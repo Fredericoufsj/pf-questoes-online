@@ -355,39 +355,6 @@ const Index = () => {
               </Card>
             ) : (
               <>
-                {/* Navigation */}
-                <div className="flex justify-between items-center">
-                  <Button
-                    variant="outline"
-                    onClick={goToPreviousQuestion}
-                    disabled={currentQuestionIndex === 0}
-                    className="border-police-200 text-police-700 hover:bg-police-50"
-                  >
-                    ← Anterior
-                  </Button>
-                  
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">
-                      Questão {currentQuestionIndex + 1} de {filteredQuestions.length}
-                    </span>
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-police-600 to-police-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${((currentQuestionIndex + 1) / filteredQuestions.length) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    onClick={goToNextQuestion}
-                    disabled={currentQuestionIndex === filteredQuestions.length - 1}
-                    className="border-police-200 text-police-700 hover:bg-police-50"
-                  >
-                    Próxima →
-                  </Button>
-                </div>
-
                 {/* Current Question */}
                 <QuestionCard
                   question={currentQuestion}
@@ -396,6 +363,39 @@ const Index = () => {
                   userId={user?.id}
                   fetchDailyUsage={handleQuestionAnswered}
                 />
+
+                {/* Navigation - agora abaixo da questão */}
+                <div className="flex flex-col items-center gap-4 mt-6">
+                  <div className="flex items-center gap-8">
+                    <Button
+                      variant="outline"
+                      onClick={goToPreviousQuestion}
+                      disabled={currentQuestionIndex === 0}
+                      className="border-police-200 text-police-700 hover:bg-police-50"
+                    >
+                      ← Anterior
+                    </Button>
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="text-sm text-gray-600">
+                        Questão {currentQuestionIndex + 1} de {filteredQuestions.length}
+                      </span>
+                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-police-600 to-police-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${((currentQuestionIndex + 1) / filteredQuestions.length) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={goToNextQuestion}
+                      disabled={currentQuestionIndex === filteredQuestions.length - 1}
+                      className="border-police-200 text-police-700 hover:bg-police-50"
+                    >
+                      Próxima →
+                    </Button>
+                  </div>
+                </div>
               </>
             )}
           </div>
