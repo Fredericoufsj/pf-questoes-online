@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -98,4 +92,52 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Starfield Animation */
+.stars, .twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.stars {
+  background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="10" r="0.5" fill="white" opacity="0.8"/><circle cx="80" cy="20" r="0.3" fill="cyan" opacity="0.6"/><circle cx="30" cy="40" r="0.4" fill="white" opacity="0.7"/><circle cx="90" cy="70" r="0.2" fill="purple" opacity="0.5"/><circle cx="20" cy="80" r="0.3" fill="white" opacity="0.9"/><circle cx="70" cy="30" r="0.5" fill="cyan" opacity="0.4"/><circle cx="50" cy="60" r="0.2" fill="white" opacity="0.8"/><circle cx="40" cy="90" r="0.4" fill="purple" opacity="0.6"/></svg>') repeat;
+  background-size: 200px 200px;
+  animation: move-stars 20s linear infinite;
+}
+
+.twinkling {
+  background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="0.3" fill="white" opacity="0.9"/><circle cx="75" cy="35" r="0.2" fill="cyan" opacity="0.8"/><circle cx="45" cy="65" r="0.4" fill="white" opacity="0.7"/><circle cx="85" cy="85" r="0.3" fill="purple" opacity="0.6"/></svg>') repeat;
+  background-size: 300px 300px;
+  animation: move-twinkling 15s linear infinite;
+}
+
+@keyframes move-stars {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-200px);
+  }
+}
+
+@keyframes move-twinkling {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-300px);
+  }
+}
+
+/* Glow effects for space theme */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
 }
