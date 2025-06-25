@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,15 +30,65 @@ const Auth = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth event:', event, session);
         if (session?.user) {
           setUser(session.user);
           navigate('/');
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
         }
       }
     );
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Handle URL hash parameters for email confirmation
+  useEffect(() => {
+    const handleHashParams = async () => {
+      if (window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const type = hashParams.get('type');
+        
+        if (accessToken && refreshToken && type === 'signup') {
+          try {
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+            
+            if (error) {
+              console.error('Error setting session:', error);
+              toast({
+                title: "⚠️ Erro na ativação da nave",
+                description: "Falha ao ativar sua conta. Tente fazer login.",
+                variant: "destructive"
+              });
+            } else if (data.user) {
+              toast({
+                title: "🎉 Nave ativada com sucesso!",
+                description: "Bem-vindo à Base Espacial Questonauta!",
+              });
+              // Clear the hash to clean up the URL
+              window.history.replaceState(null, '', window.location.pathname);
+              navigate('/');
+            }
+          } catch (error) {
+            console.error('Session error:', error);
+            toast({
+              title: "⚠️ Erro na ativação",
+              description: "Erro ao processar ativação da conta.",
+              variant: "destructive"
+            });
+          }
+        }
+      }
+    };
+
+    handleHashParams();
+  }, [navigate, toast]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +103,7 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = `${window.location.origin}/auth`;
       
       const { error } = await supabase.auth.signUp({
         email,
@@ -84,7 +133,7 @@ const Auth = () => {
       } else {
         toast({
           title: "🚀 Nave registrada com sucesso!",
-          description: "Bem-vindo à base espacial Questonauta. Verifique seu email para ativar sua conta.",
+          description: "Verifique seu email para ativar sua conta na base espacial.",
         });
       }
     } catch (error) {
