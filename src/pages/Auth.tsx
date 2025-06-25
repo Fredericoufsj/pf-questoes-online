@@ -45,8 +45,8 @@ const Auth = () => {
     e.preventDefault();
     if (!email || !password || !fullName) {
       toast({
-        title: "Erro",
-        description: "Preencha todos os campos",
+        title: "❌ Erro na comunicação",
+        description: "Preencha todos os campos da nave",
         variant: "destructive"
       });
       return;
@@ -54,40 +54,43 @@ const Auth = () => {
 
     setLoading(true);
     try {
+      const redirectUrl = `${window.location.origin}/`;
+      
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName
-          }
+          },
+          emailRedirectTo: redirectUrl
         }
       });
 
       if (error) {
         if (error.message.includes('already registered')) {
           toast({
-            title: "Erro",
-            description: "Este email já está cadastrado. Tente fazer login.",
+            title: "⚠️ Astronauta já cadastrado",
+            description: "Esta nave já está registrada. Tente fazer login.",
             variant: "destructive"
           });
         } else {
           toast({
-            title: "Erro no cadastro",
+            title: "❌ Falha no lançamento",
             description: error.message,
             variant: "destructive"
           });
         }
       } else {
         toast({
-          title: "Cadastro realizado!",
-          description: "Bem-vindo à plataforma de questões.",
+          title: "🚀 Nave registrada com sucesso!",
+          description: "Bem-vindo à base espacial Questonauta. Verifique seu email para ativar sua conta.",
         });
       }
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro inesperado",
+        title: "💥 Erro no sistema",
+        description: "Falha crítica na base espacial",
         variant: "destructive"
       });
     } finally {
@@ -99,8 +102,8 @@ const Auth = () => {
     e.preventDefault();
     if (!email || !password) {
       toast({
-        title: "Erro",
-        description: "Preencha email e senha",
+        title: "⚠️ Dados incompletos",
+        description: "Insira as coordenadas de acesso (email e senha)",
         variant: "destructive"
       });
       return;
@@ -116,27 +119,27 @@ const Auth = () => {
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
           toast({
-            title: "Erro",
-            description: "Email ou senha incorretos",
+            title: "🔐 Acesso negado",
+            description: "Coordenadas de acesso incorretas",
             variant: "destructive"
           });
         } else {
           toast({
-            title: "Erro no login",
+            title: "❌ Falha na conexão",
             description: error.message,
             variant: "destructive"
           });
         }
       } else {
         toast({
-          title: "Login realizado!",
-          description: "Bem-vindo de volta!",
+          title: "🛸 Conexão estabelecida!",
+          description: "Bem-vindo de volta, astronauta!",
         });
       }
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Ocorreu um erro inesperado",
+        title: "💥 Erro no sistema",
+        description: "Falha crítica na base espacial",
         variant: "destructive"
       });
     } finally {
@@ -149,95 +152,104 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-police-50 to-police-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-police-800 mb-2">
-            Plataforma de Questões
-          </h1>
-          <p className="text-police-600">Concurso Polícia Federal</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      {/* Starfield background effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="stars"></div>
+        <div className="twinkling"></div>
+      </div>
 
-        <Card className="shadow-xl border-0">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-police-800">
-              {isSignUp ? "Criar Conta" : "Entrar"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="space-y-4">
-              {isSignUp && (
+      <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              🚀 Questonauta
+            </h1>
+            <p className="text-cyan-200 text-lg">Portal de Acesso à Base Espacial</p>
+            <p className="text-slate-400">Explorando o Universo do Conhecimento</p>
+          </div>
+
+          <Card className="shadow-xl border-cyan-500/30 bg-slate-800/50 backdrop-blur-sm">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl text-center text-cyan-300">
+                {isSignUp ? "🛸 Registrar Nova Nave" : "🔐 Acessar Base Espacial"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="space-y-4">
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName" className="text-cyan-300">Nome do Comandante</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Digite o nome do comandante"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="border-cyan-500/30 focus:border-cyan-400 bg-slate-700/50 text-white placeholder-slate-400"
+                    />
+                  </div>
+                )}
+                
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Nome Completo</Label>
+                  <Label htmlFor="email" className="text-cyan-300">Coordenadas de Email</Label>
                   <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="Digite seu nome completo"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="border-police-200 focus:border-police-500"
+                    id="email"
+                    type="email"
+                    placeholder="Digite suas coordenadas de email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="border-cyan-500/30 focus:border-cyan-400 bg-slate-700/50 text-white placeholder-slate-400"
                   />
                 </div>
-              )}
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Digite seu email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="border-police-200 focus:border-police-500"
-                />
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-cyan-300">Código de Acesso</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Digite seu código de acesso"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="border-cyan-500/30 focus:border-cyan-400 bg-slate-700/50 text-white placeholder-slate-400"
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white"
+                  disabled={loading}
+                >
+                  {loading ? "🛸 Conectando..." : (isSignUp ? "🚀 Registrar Nave" : "🔐 Acessar Base")}
+                </Button>
+              </form>
+
+              <div className="text-center">
+                <Button
+                  variant="link"
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-cyan-400 hover:text-cyan-300"
+                >
+                  {isSignUp 
+                    ? "Já tem uma nave? Acesse a base espacial" 
+                    : "Nova missão? Registre sua nave"
+                  }
+                </Button>
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Digite sua senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="border-police-200 focus:border-police-500"
-                />
+
+              <div className="text-center">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/')}
+                  className="text-cyan-400 border-cyan-500/30 hover:bg-cyan-400/20 bg-transparent"
+                >
+                  🌌 Voltar ao espaço
+                </Button>
               </div>
-
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-police-600 to-police-500 hover:from-police-700 hover:to-police-600"
-                disabled={loading}
-              >
-                {loading ? "Processando..." : (isSignUp ? "Criar Conta" : "Entrar")}
-              </Button>
-            </form>
-
-            <div className="text-center">
-              <Button
-                variant="link"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-police-600 hover:text-police-800"
-              >
-                {isSignUp 
-                  ? "Já tem uma conta? Faça login" 
-                  : "Não tem conta? Cadastre-se"
-                }
-              </Button>
-            </div>
-
-            <div className="text-center">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/')}
-                className="text-police-600 border-police-200 hover:bg-police-50"
-              >
-                Voltar ao início
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

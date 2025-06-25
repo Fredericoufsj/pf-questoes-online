@@ -1,54 +1,61 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+interface ExplanationRequest {
+  question: string;
+  answer: string;
+  subject: string;
 }
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+const handler = async (req: Request): Promise<Response> => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { question, command, alternatives, correctAnswer, comment, subject, discipline } = await req.json()
-
-    const huggingFaceToken = Deno.env.get('HUGGING_FACE_TOKEN')
+    const huggingFaceToken = Deno.env.get("HUGGING_FACE_TOKEN");
     
     if (!huggingFaceToken) {
-      throw new Error('Token do Hugging Face não configurado')
+      console.error("Token do Hugging Face não configurado");
+      return new Response(
+        JSON.stringify({ error: "Token do Hugging Face não configurado" }),
+        { 
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        }
+      );
     }
 
-    const prompt = `
-Como um especialista em ${discipline}, especificamente em ${subject}, explique detalhadamente a seguinte questão de concurso:
+    const { question, answer, subject }: ExplanationRequest = await req.json();
 
-QUESTÃO: ${question}
-COMANDO: ${command}
-ALTERNATIVAS: ${alternatives.join('; ')}
-RESPOSTA CORRETA: ${correctAnswer}
-COMENTÁRIO OFICIAL: ${comment}
+    const prompt = `Como especialista em ${subject}, forneça uma explicação detalhada sobre esta questão espacial do universo Questonauta:
 
-Por favor, forneça uma explicação didática e detalhada que inclua:
+MISSÃO ESPACIAL: ${question}
 
-1. CONCEITO PRINCIPAL: Explique o conceito fundamental abordado na questão
-2. ANÁLISE DA QUESTÃO: Analise por que a resposta correta está certa e por que as outras estão erradas
-3. EXEMPLOS PRÁTICOS: Dê exemplos relacionados ao tema para facilitar o entendimento
-4. DICAS DE ESTUDO: Sugira pontos importantes para estudar sobre este assunto
+RESPOSTA CORRETA: ${answer}
 
-Responda de forma clara, didática e estruturada, como se estivesse ensinando para um estudante.
-`
+Por favor, forneça uma explicação que inclua:
+1. 🌟 Conceito Principal: Explique o conceito fundamental
+2. 🚀 Justificativa da Resposta: Por que esta é a resposta correta
+3. 🛸 Exemplos Práticos: Situações onde este conhecimento se aplica
+4. 💫 Dicas para Astronautas: Estratégias de estudo relacionadas
 
-    console.log('Enviando prompt para Hugging Face:', prompt.substring(0, 200) + '...')
+Mantenha um tom espacial e use terminologia do universo Questonauta (missões, astronautas, base espacial, etc.).`;
 
+    console.log("Enviando requisição para Hugging Face...");
+    
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1',
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${huggingFaceToken}`,
-          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${huggingFaceToken}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           inputs: prompt,
@@ -57,45 +64,53 @@ Responda de forma clara, didática e estruturada, como se estivesse ensinando pa
             temperature: 0.7,
             top_p: 0.9,
             do_sample: true,
-          },
+          }
         }),
       }
-    )
+    );
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Erro da API Hugging Face:', response.status, errorText)
-      throw new Error(`Erro da API: ${response.status} - ${errorText}`)
-    }
-
-    const result = await response.json()
-    console.log('Resposta da Hugging Face recebida')
-
-    if (Array.isArray(result) && result.length > 0) {
-      const explanation = result[0].generated_text
-      
-      // Remove o prompt da resposta, mantendo apenas a explicação gerada
-      const cleanedExplanation = explanation.replace(prompt, '').trim()
-      
+      const errorText = await response.text();
+      console.error("Erro da API Hugging Face:", response.status, errorText);
       return new Response(
-        JSON.stringify({ explanation: cleanedExplanation }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    } else {
-      throw new Error('Formato de resposta inesperado da API')
+        JSON.stringify({ error: `Erro da API: ${response.status}` }),
+        { 
+          status: response.status,
+          headers: { "Content-Type": "application/json", ...corsHeaders }
+        }
+      );
     }
+
+    const result = await response.json();
+    console.log("Resposta recebida da Hugging Face");
+
+    let explanation = "";
+    if (Array.isArray(result) && result.length > 0 && result[0].generated_text) {
+      explanation = result[0].generated_text.replace(prompt, "").trim();
+    } else if (result.generated_text) {
+      explanation = result.generated_text.replace(prompt, "").trim();
+    } else {
+      explanation = "🚀 Comando da base espacial: Não foi possível gerar explicação detalhada neste momento. Tente novamente mais tarde, astronauta!";
+    }
+
+    return new Response(
+      JSON.stringify({ explanation }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      }
+    );
 
   } catch (error) {
-    console.error('Erro ao gerar explicação:', error)
+    console.error("Erro na função generate-explanation:", error);
     return new Response(
-      JSON.stringify({ 
-        error: 'Erro ao gerar explicação',
-        details: error.message 
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
+      JSON.stringify({ error: "Falha na comunicação com a base espacial" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       }
-    )
+    );
   }
-})
+};
+
+serve(handler);

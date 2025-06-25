@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Rocket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useGamification } from "../hooks/useGamification";
@@ -36,45 +36,64 @@ const Gamification = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-4">Acesso Restrito</h2>
-          <p className="text-gray-600 mb-4">
-            Você precisa estar logado para ver o sistema de gamificação.
-          </p>
-          <Button onClick={() => window.location.href = '/auth'}>
-            Fazer Login
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center relative">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="stars"></div>
+          <div className="twinkling"></div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="bg-slate-800/50 backdrop-blur-sm border-cyan-500/30 rounded-lg p-8 border">
+            <div className="text-6xl mb-4">🔒</div>
+            <h2 className="text-xl font-semibold mb-4 text-cyan-300">Acesso Restrito ao Hall das Conquistas</h2>
+            <p className="text-slate-400 mb-4">
+              Apenas astronautas registrados podem acessar o sistema de conquistas.
+            </p>
+            <Button 
+              onClick={() => window.location.href = '/auth'}
+              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
+            >
+              <Rocket className="w-4 h-4 mr-2" />
+              Embarcar na Nave
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      {/* Starfield background effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="stars"></div>
+        <div className="twinkling"></div>
+      </div>
+
       {/* Header */}
-      <div className="bg-gradient-to-r from-police-900 to-police-700 text-white py-8">
+      <div className="bg-gradient-to-r from-slate-800 via-purple-800 to-slate-800 text-white py-8 relative z-10 border-b border-cyan-500/30">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 mb-4">
             <Button 
               variant="outline" 
               onClick={() => window.location.href = '/'}
-              className="border-white text-white hover:bg-white hover:text-police-800"
+              className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
+              🚀 Voltar à Base
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-2">🎮 Sistema de Gamificação</h1>
-            <p className="text-police-200 text-lg">
-              Ganhe pontos, desbloqueie conquistas e suba no ranking!
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              🏆 Hall das Conquistas Espaciais
+            </h1>
+            <p className="text-cyan-200 text-lg">
+              Desafios, medalhas e ranking de astronautas exploradores!
             </p>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 space-y-8">
+      <div className="container mx-auto px-4 py-8 space-y-8 relative z-10">
         {/* User Stats */}
         <UserStatsCard 
           userPoints={userPoints} 

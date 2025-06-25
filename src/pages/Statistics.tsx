@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,7 @@ import { WeakAreasTable } from "../components/statistics/WeakAreasTable";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Rocket } from "lucide-react";
 
 interface UserStats {
   total_answers: number;
@@ -120,15 +119,24 @@ const Statistics = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
-        <Card className="w-full max-w-md mx-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center relative">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="stars"></div>
+          <div className="twinkling"></div>
+        </div>
+        <Card className="w-full max-w-md mx-4 bg-slate-800/50 backdrop-blur-sm border-cyan-500/30 relative z-10">
           <CardContent className="p-6 text-center">
-            <h2 className="text-xl font-semibold mb-4">Acesso Restrito</h2>
-            <p className="text-gray-600 mb-4">
-              Você precisa estar logado para visualizar suas estatísticas.
+            <div className="text-6xl mb-4">🔒</div>
+            <h2 className="text-xl font-semibold mb-4 text-cyan-300">Acesso Restrito à Base</h2>
+            <p className="text-slate-400 mb-4">
+              Apenas astronautas registrados podem acessar os dados da missão.
             </p>
-            <Button onClick={() => window.location.href = '/auth'}>
-              Fazer Login
+            <Button 
+              onClick={() => window.location.href = '/auth'}
+              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
+            >
+              <Rocket className="w-4 h-4 mr-2" />
+              Embarcar na Nave
             </Button>
           </CardContent>
         </Card>
@@ -138,50 +146,62 @@ const Statistics = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-police-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando estatísticas...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center relative">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="stars"></div>
+          <div className="twinkling"></div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto"></div>
+          <p className="mt-4 text-cyan-200">🛸 Analisando dados da missão...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      {/* Starfield background effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="stars"></div>
+        <div className="twinkling"></div>
+      </div>
+
       {/* Header */}
-      <div className="bg-gradient-to-r from-police-900 to-police-700 text-white py-8">
+      <div className="bg-gradient-to-r from-slate-800 via-purple-800 to-slate-800 text-white py-8 relative z-10 border-b border-cyan-500/30">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 mb-4">
             <Button 
               variant="outline" 
               onClick={() => window.location.href = '/'}
-              className="border-white text-white hover:bg-white hover:text-police-800"
+              className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
+              🚀 Voltar à Base
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-2">📊 Acompanhamento de Desempenho</h1>
-            <p className="text-police-200 text-lg">Analise sua evolução e identifique pontos de melhoria</p>
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              📊 Central de Dados da Missão
+            </h1>
+            <p className="text-cyan-200 text-lg">Análise completa do desempenho espacial</p>
             <div className="flex justify-center gap-2 mt-4">
-              <Badge variant="secondary" className="bg-white/20 text-white">
-                👤 {user.email}
+              <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30">
+                👨‍🚀 {user.email}
               </Badge>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         {userStats && userStats.total_answers > 0 ? (
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-              <TabsTrigger value="subjects">Por Disciplina</TabsTrigger>
-              <TabsTrigger value="evolution">Evolução</TabsTrigger>
-              <TabsTrigger value="weak-areas">Pontos Fracos</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 bg-slate-800/50 backdrop-blur-sm border-cyan-500/30">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300">🌟 Visão Geral</TabsTrigger>
+              <TabsTrigger value="subjects" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300">🎯 Por Setor</TabsTrigger>
+              <TabsTrigger value="evolution" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300">📈 Evolução</TabsTrigger>
+              <TabsTrigger value="weak-areas" className="data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-300">⚠️ Áreas Críticas</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
@@ -201,18 +221,21 @@ const Statistics = () => {
             </TabsContent>
           </Tabs>
         ) : (
-          <Card className="text-center py-12">
+          <Card className="text-center py-12 bg-slate-800/50 backdrop-blur-sm border-cyan-500/30">
             <CardContent>
-              <div className="text-gray-400 mb-4">
-                <div className="text-6xl mb-4">📈</div>
-                <h3 className="text-xl font-medium text-gray-600 mb-2">
-                  Nenhuma estatística disponível
+              <div className="text-cyan-400 mb-4">
+                <div className="text-6xl mb-4">🛸</div>
+                <h3 className="text-xl font-medium text-cyan-300 mb-2">
+                  Nenhum dado de missão disponível
                 </h3>
-                <p className="text-gray-500 mb-4">
-                  Responda algumas questões para começar a acompanhar seu desempenho
+                <p className="text-slate-400 mb-4">
+                  Complete algumas missões para começar a analisar seu desempenho espacial
                 </p>
-                <Button onClick={() => window.location.href = '/'} variant="outline">
-                  Começar a Responder Questões
+                <Button 
+                  onClick={() => window.location.href = '/'} 
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
+                >
+                  🚀 Iniciar Missões
                 </Button>
               </div>
             </CardContent>
