@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -226,34 +225,33 @@ const Index = () => {
       </div>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-800 via-purple-800 to-slate-800 text-white py-8 relative z-10 border-b border-cyan-500/30">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center">
+      <div className="bg-gradient-to-r from-slate-800 via-purple-800 to-slate-800 text-white py-6 sm:py-8 relative z-10 border-b border-cyan-500/30">
+        <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
             <div className="text-center flex-1">
-              <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent break-words">
                 🚀 Questonauta
               </h1>
-              <p className="text-cyan-200 text-lg">Explorando o Universo do Conhecimento</p>
-              <div className="flex justify-center gap-2 mt-4">
-                <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30">
+              <p className="text-cyan-200 text-base sm:text-lg break-words">Explorando o Universo do Conhecimento</p>
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
+                <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30 text-xs sm:text-base px-2 sm:px-4">
                   🌌 Missões Espaciais
                 </Badge>
-                <Badge variant="secondary" className="bg-purple-500/20 text-purple-200 border-purple-500/30">
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-200 border-purple-500/30 text-xs sm:text-base px-2 sm:px-4">
                   🛸 IA Avançada
                 </Badge>
-                <Badge variant="secondary" className="bg-blue-500/20 text-blue-200 border-blue-500/30">
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-200 border-blue-500/30 text-xs sm:text-base px-2 sm:px-4">
                   ⭐ Sistema Inteligente
                 </Badge>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-4 sm:mt-0 w-full sm:w-auto">
               {user ? (
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
                   <Button 
                     variant="outline" 
                     onClick={() => window.location.href = '/gamification'}
-                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
+                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     <Zap className="w-4 h-4 mr-2" />
                     Conquistas
@@ -261,29 +259,29 @@ const Index = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => window.location.href = '/statistics'}
-                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
+                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     📊 Dados da Missão
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => window.location.href = '/study-suggestions'}
-                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
+                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     🎯 Navegação IA
                   </Button>
-                  <div className="text-right">
-                    <p className="text-sm text-cyan-300">Astronauta:</p>
-                    <p className="font-medium text-white">{user.email}</p>
-                    <div className="flex items-center gap-2 mt-1">
+                  <div className="text-right mt-2 sm:mt-0">
+                    <p className="text-xs sm:text-sm text-cyan-300">Astronauta:</p>
+                    <p className="font-medium text-white text-xs sm:text-base break-all">{user.email}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
                       {subscription.subscription_tier === 'premium' && (
-                        <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900">
+                        <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-xs sm:text-base px-2 sm:px-4">
                           <Crown className="h-3 w-3 mr-1" />
                           Comandante
                         </Badge>
                       )}
                       {userPoints && (
-                        <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30">
+                        <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30 text-xs sm:text-base px-2 sm:px-4">
                           <Star className="h-3 w-3 mr-1" />
                           {userPoints.total_points} XP
                         </Badge>
@@ -293,7 +291,7 @@ const Index = () => {
                   <Button 
                     variant="outline" 
                     onClick={handleSignOut}
-                    className="border-red-400 text-red-300 hover:bg-red-400/20 bg-transparent"
+                    className="border-red-400 text-red-300 hover:bg-red-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     🛸 Desembarcar
                   </Button>
@@ -302,7 +300,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => window.location.href = '/auth'}
-                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
+                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                 >
                   <Rocket className="w-4 h-4 mr-2" />
                   Embarcar
@@ -313,7 +311,7 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="w-full max-w-3xl mx-auto px-2 sm:px-4 py-6 sm:py-8 relative z-10">
         {/* Subscription Banner */}
         {user && (
           <SubscriptionBanner
@@ -348,15 +346,15 @@ const Index = () => {
                 <CardContent>
                   <div className="text-red-400 mb-4">
                     <div className="text-6xl mb-4">🔒</div>
-                    <h3 className="text-xl font-medium text-red-300 mb-2">
+                    <h3 className="text-lg sm:text-xl font-medium text-red-300 mb-2">
                       Combustível esgotado
                     </h3>
-                    <p className="text-red-400 mb-4">
+                    <p className="text-red-400 mb-4 text-sm sm:text-base">
                       Você já completou 10 missões hoje. Upgrade para Comandante e tenha acesso ilimitado!
                     </p>
                     <Button 
                       onClick={handleUpgradeClick}
-                      className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white"
+                      className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white text-xs sm:text-base px-2 sm:px-4"
                     >
                       <Crown className="h-4 w-4 mr-2" />
                       Upgrade para Comandante - R$ 14,49/mês
@@ -377,20 +375,20 @@ const Index = () => {
 
                 {/* Navigation - agora abaixo da questão */}
                 <div className="flex flex-col items-center gap-4 mt-6">
-                  <div className="flex items-center gap-8">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 w-full justify-center">
                     <Button
                       variant="outline"
                       onClick={goToPreviousQuestion}
                       disabled={currentQuestionIndex === 0}
-                      className="border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/20 bg-slate-800/50 backdrop-blur-sm"
+                      className="border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/20 bg-slate-800/50 backdrop-blur-sm text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                     >
                       ← Missão Anterior
                     </Button>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-sm text-cyan-300">
+                    <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
+                      <span className="text-xs sm:text-sm text-cyan-300">
                         Missão {currentQuestionIndex + 1} de {filteredQuestions.length}
                       </span>
-                      <div className="w-32 bg-slate-700 rounded-full h-2">
+                      <div className="w-full sm:w-32 bg-slate-700 rounded-full h-2">
                         <div 
                           className="bg-gradient-to-r from-cyan-400 to-purple-400 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${((currentQuestionIndex + 1) / filteredQuestions.length) * 100}%` }}
@@ -401,7 +399,7 @@ const Index = () => {
                       variant="outline"
                       onClick={goToNextQuestion}
                       disabled={currentQuestionIndex === filteredQuestions.length - 1}
-                      className="border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/20 bg-slate-800/50 backdrop-blur-sm"
+                      className="border-cyan-400/50 text-cyan-300 hover:bg-cyan-400/20 bg-slate-800/50 backdrop-blur-sm text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                     >
                       Próxima Missão →
                     </Button>
@@ -415,13 +413,13 @@ const Index = () => {
             <CardContent>
               <div className="text-cyan-400 mb-4">
                 <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-xl font-medium text-cyan-300 mb-2">
+                <h3 className="text-lg sm:text-xl font-medium text-cyan-300 mb-2">
                   Nenhuma missão encontrada
                 </h3>
-                <p className="text-slate-400 mb-4">
+                <p className="text-slate-400 mb-4 text-sm sm:text-base">
                   Ajuste os filtros para encontrar novas missões espaciais
                 </p>
-                <Button onClick={clearFilters} variant="outline" className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20">
+                <Button onClick={clearFilters} variant="outline" className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 text-xs sm:text-base px-2 sm:px-4">
                   Limpar Filtros
                 </Button>
               </div>
@@ -431,9 +429,9 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-slate-900/80 backdrop-blur-sm text-white py-8 mt-16 border-t border-cyan-500/30 relative z-10">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-slate-300">
+      <footer className="bg-slate-900/80 backdrop-blur-sm text-white py-6 sm:py-8 mt-16 border-t border-cyan-500/30 relative z-10">
+        <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 text-center">
+          <p className="text-slate-300 text-xs sm:text-base">
             © 2024 Questonauta - Explorando o Universo do Conhecimento. 
             🚀 Sistema desenvolvido para astronautas do saber.
           </p>
