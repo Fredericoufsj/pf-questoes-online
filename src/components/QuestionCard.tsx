@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AnswerHistoryModal } from "./AnswerHistoryModal";
 import { QuestionStudySuggestion } from "./QuestionStudySuggestion";
 import { QuestionExplanation } from "./QuestionExplanation";
+import { QuestionReportModal } from "./QuestionReportModal";
 
 interface QuestionCardProps {
   question: Question;
@@ -174,6 +175,12 @@ export const QuestionCard = ({ question, questionNumber, totalQuestions, userId,
                 <span>•</span>
                 <span>🎯 {question.orgao}</span>
               </div>
+            </div>
+            <div className="ml-4">
+              <QuestionReportModal 
+                questionId={question.id} 
+                userId={userId}
+              />
             </div>
           </div>
         </CardHeader>

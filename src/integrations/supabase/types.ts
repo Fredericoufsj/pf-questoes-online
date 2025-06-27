@@ -135,6 +135,50 @@ export type Database = {
         }
         Relationships: []
       }
+      question_reports: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          description: string
+          id: string
+          question_id: string
+          report_type: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          question_id: string
+          report_type: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          question_id?: string
+          report_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_question_reports_question_id"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           alternativas: string[]
