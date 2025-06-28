@@ -11,7 +11,7 @@ Sistema completo de questões para preparação no concurso da Polícia Federal.
 - ESLint
 - Prettier
 
-## Como Executar
+## Como Executar projeto
 
 1. Clone o repositório
 2. Instale as dependências:
