@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,8 @@ interface QuestionCardProps {
   totalQuestions: number;
   userId?: string;
   fetchDailyUsage?: () => void;
+  goToPreviousQuestion: () => void;
+  goToNextQuestion: () => void;
 }
 
 interface UserAnswer {
@@ -26,7 +27,15 @@ interface UserAnswer {
   answered_at: string;
 }
 
-export const QuestionCard = ({ question, questionNumber, totalQuestions, userId, fetchDailyUsage }: QuestionCardProps) => {
+export const QuestionCard = ({ 
+  question, 
+  questionNumber, 
+  totalQuestions, 
+  userId, 
+  fetchDailyUsage,
+  goToPreviousQuestion,
+  goToNextQuestion 
+}: QuestionCardProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [answered, setAnswered] = useState(false);
