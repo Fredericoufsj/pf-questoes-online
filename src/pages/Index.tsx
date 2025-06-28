@@ -272,23 +272,23 @@ const Index = () => {
                   >
                     🎯 Navegação IA
                   </Button>
-                  <div className="text-right mt-2 sm:mt-0">
-                    <p className="text-xs sm:text-sm text-cyan-300">Astronauta:</p>
-                    <p className="font-medium text-white text-xs sm:text-base break-all">{user.email}</p>
-                    <div className="flex flex-wrap items-center gap-2 mt-1">
-                      {subscription.subscription_tier === 'premium' && (
-                        <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-xs sm:text-base px-2 sm:px-4">
-                          <Crown className="h-3 w-3 mr-1" />
-                          Comandante
-                        </Badge>
-                      )}
-                      {userPoints && (
-                        <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30 text-xs sm:text-base px-2 sm:px-4">
-                          <Star className="h-3 w-3 mr-1" />
-                          {userPoints.total_points} XP
-                        </Badge>
-                      )}
-                    </div>
+                  <div className="flex items-center gap-1 mt-2 sm:mt-0 justify-end">
+                    <span className="text-xs sm:text-sm text-cyan-300">Astronauta:</span>
+                    <span className="font-medium text-white text-xs sm:text-base break-all">{user.email}</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    {subscription.subscription_tier === 'premium' && (
+                      <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-xs sm:text-base px-2 sm:px-4">
+                        <Crown className="h-3 w-3 mr-1" />
+                        Comandante
+                      </Badge>
+                    )}
+                    {userPoints && (
+                      <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30 text-xs sm:text-base px-2 sm:px-4">
+                        <Star className="h-3 w-3 mr-1" />
+                        {userPoints.total_points} XP
+                      </Badge>
+                    )}
                   </div>
                   <Button 
                     variant="outline" 
