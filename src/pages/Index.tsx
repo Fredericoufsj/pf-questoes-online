@@ -229,12 +229,14 @@ const Index = () => {
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-800 via-purple-800 to-slate-800 text-white py-6 sm:py-8 relative z-10 border-b border-cyan-500/30">
         <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
-            <div className="text-center flex-1">
-              <h1 className="text-3xl sm:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent break-words">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 sm:gap-0">
+            {/* Nome do site centralizado */}
+            <div className="flex-1 flex flex-col items-center">
+              <h1 className="text-3xl sm:text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent break-words text-center">
                 🚀 Questonauta
               </h1>
-              <p className="text-cyan-200 text-base sm:text-lg break-words">Explorando o Universo do Conhecimento</p>
+              <p className="text-cyan-200 text-base sm:text-lg break-words text-center">Explorando o Universo do Conhecimento</p>
+              {/* Badges de recursos */}
               <div className="flex flex-wrap justify-center gap-2 mt-4">
                 <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-200 border-cyan-500/30 text-xs sm:text-base px-2 sm:px-4">
                   🌌 Missões Espaciais
@@ -246,37 +248,41 @@ const Index = () => {
                   ⭐ Sistema Inteligente
                 </Badge>
               </div>
+              {/* Botões de navegação */}
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/gamification')}
+                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Conquistas
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/statistics')}
+                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4"
+                >
+                  📊 Dados da Missão
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/study-suggestions')}
+                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4"
+                >
+                  🎯 Navegação IA
+                </Button>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-4 sm:mt-0 w-full sm:w-auto">
+            {/* Bloco do usuário à direita em desktop, abaixo em mobile */}
+            <div className="w-full sm:w-auto flex flex-col items-end mt-6 sm:mt-0">
               {user ? (
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => navigate('/gamification')}
-                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
-                  >
-                    <Zap className="w-4 h-4 mr-2" />
-                    Conquistas
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => navigate('/statistics')}
-                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
-                  >
-                    📊 Dados da Missão
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => navigate('/study-suggestions')}
-                    className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
-                  >
-                    🎯 Navegação IA
-                  </Button>
-                  <div className="flex items-center gap-1 mt-2 sm:mt-0 justify-end">
+                <>
+                  <div className="flex items-center gap-1 mb-1">
                     <span className="text-xs sm:text-sm text-cyan-300">Astronauta:</span>
-                    <span className="font-medium text-white text-xs sm:text-base break-all">{user.email}</span>
+                    <span className="font-medium text-white text-xs sm:text-base break-all sm:break-normal sm:truncate max-w-[120px] sm:max-w-[200px]" title={user.email}>{user.email}</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
                     {subscription.subscription_tier === 'premium' && (
                       <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-slate-900 text-xs sm:text-base px-2 sm:px-4">
                         <Crown className="h-3 w-3 mr-1" />
@@ -293,16 +299,16 @@ const Index = () => {
                   <Button 
                     variant="outline" 
                     onClick={handleSignOut}
-                    className="border-red-400 text-red-300 hover:bg-red-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
+                    className="border-red-400 text-red-300 hover:bg-red-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4"
                   >
                     🛸 Desembarcar
                   </Button>
-                </div>
+                </>
               ) : (
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/auth')}
-                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
+                  className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4"
                 >
                   <Rocket className="w-4 h-4 mr-2" />
                   Embarcar
