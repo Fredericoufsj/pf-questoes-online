@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Rocket } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface UserStats {
   total_answers: number;
@@ -35,6 +36,7 @@ const Statistics = () => {
   const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -132,7 +134,7 @@ const Statistics = () => {
               Apenas astronautas registrados podem acessar os dados da missão.
             </p>
             <Button 
-              onClick={() => window.location.href = '/auth'}
+              onClick={() => navigate('/auth')}
               className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
             >
               <Rocket className="w-4 h-4 mr-2" />
@@ -173,7 +175,7 @@ const Statistics = () => {
           <div className="flex items-center gap-4 mb-4">
             <Button 
               variant="outline" 
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
               className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -232,7 +234,7 @@ const Statistics = () => {
                   Complete algumas missões para começar a analisar seu desempenho espacial
                 </p>
                 <Button 
-                  onClick={() => window.location.href = '/'} 
+                  onClick={() => navigate('/')} 
                   className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
                 >
                   🚀 Iniciar Missões

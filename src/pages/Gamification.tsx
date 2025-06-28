@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Rocket } from "lucide-react";
@@ -8,9 +7,11 @@ import { useGamification } from "../hooks/useGamification";
 import { UserStatsCard } from "../components/gamification/UserStatsCard";
 import { AchievementsSection } from "../components/gamification/AchievementsSection";
 import { RankingCard } from "../components/gamification/RankingCard";
+import { useNavigate } from "react-router-dom";
 
 const Gamification = () => {
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -49,7 +50,7 @@ const Gamification = () => {
               Apenas astronautas registrados podem acessar o sistema de conquistas.
             </p>
             <Button 
-              onClick={() => window.location.href = '/auth'}
+              onClick={() => navigate('/auth')}
               className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
             >
               <Rocket className="w-4 h-4 mr-2" />
@@ -75,7 +76,7 @@ const Gamification = () => {
           <div className="flex items-center gap-4 mb-4">
             <Button 
               variant="outline" 
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
               className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "../hooks/useSubscription";
 import { useGamification } from "../hooks/useGamification";
 import { Crown, Trophy, Award, Rocket, Zap, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -20,6 +21,7 @@ const Index = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<IQuestionFilters>({
     search: "",
     ano: [],
@@ -173,7 +175,7 @@ const Index = () => {
         description: "Faça login para acessar a nave premium.",
         variant: "destructive"
       });
-      window.location.href = '/auth';
+      navigate('/auth');
       return;
     }
 
@@ -250,7 +252,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
                   <Button 
                     variant="outline" 
-                    onClick={() => window.location.href = '/gamification'}
+                    onClick={() => navigate('/gamification')}
                     className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     <Zap className="w-4 h-4 mr-2" />
@@ -258,14 +260,14 @@ const Index = () => {
                   </Button>
                   <Button 
                     variant="outline" 
-                    onClick={() => window.location.href = '/statistics'}
+                    onClick={() => navigate('/statistics')}
                     className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     📊 Dados da Missão
                   </Button>
                   <Button 
                     variant="outline" 
-                    onClick={() => window.location.href = '/study-suggestions'}
+                    onClick={() => navigate('/study-suggestions')}
                     className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                   >
                     🎯 Navegação IA
@@ -299,7 +301,7 @@ const Index = () => {
               ) : (
                 <Button 
                   variant="outline" 
-                  onClick={() => window.location.href = '/auth'}
+                  onClick={() => navigate('/auth')}
                   className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent text-xs sm:text-base px-2 sm:px-4 w-full sm:w-auto"
                 >
                   <Rocket className="w-4 h-4 mr-2" />
@@ -371,6 +373,8 @@ const Index = () => {
                   totalQuestions={filteredQuestions.length}
                   userId={user?.id}
                   fetchDailyUsage={handleQuestionAnswered}
+                  goToPreviousQuestion={goToPreviousQuestion}
+                  goToNextQuestion={goToNextQuestion}
                 />
 
                 {/* Navigation - agora abaixo da questão */}
