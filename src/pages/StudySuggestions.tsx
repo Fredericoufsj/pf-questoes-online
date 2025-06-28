@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,9 +8,11 @@ import { useStudySuggestions } from "../hooks/useStudySuggestions";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { ArrowLeft, Rocket } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const StudySuggestions = () => {
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,7 +54,7 @@ const StudySuggestions = () => {
               Apenas astronautas registrados podem acessar a navegação inteligente por IA.
             </p>
             <Button 
-              onClick={() => window.location.href = '/auth'}
+              onClick={() => navigate('/auth')}
               className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
             >
               <Rocket className="w-4 h-4 mr-2" />
@@ -79,7 +80,7 @@ const StudySuggestions = () => {
           <div className="flex items-center gap-4 mb-4">
             <Button 
               variant="outline" 
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
               className="border-cyan-400 text-cyan-300 hover:bg-cyan-400/20 bg-transparent"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
