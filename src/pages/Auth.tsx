@@ -103,7 +103,7 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      const redirectUrl = `${window.location.origin}/questoes-pf/auth`;
+      const redirectUrl = `${window.location.origin}/questonauta/auth`;
       
       const { error } = await supabase.auth.signUp({
         email,

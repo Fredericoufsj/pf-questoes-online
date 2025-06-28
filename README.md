@@ -1,73 +1,46 @@
-# Welcome to your Lovable project
+# PF Questões Online
 
-## Project info
+Sistema completo de questões para preparação no concurso da Polícia Federal.
 
-**URL**: https://lovable.dev/projects/8f8029bc-255e-4bb9-9a8f-33e1e015d3ba
+## Tecnologias Utilizadas
 
-## How can I edit this code?
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- ESLint
+- Prettier
 
-There are several ways of editing your application.
+## Como Executar
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/8f8029bc-255e-4bb9-9a8f-33e1e015d3ba) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+1. Clone o repositório
+2. Instale as dependências:
+```bash
+npm install
+```
+3. Execute o projeto em modo de desenvolvimento:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Estrutura do Projeto
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+O projeto está organizado da seguinte forma:
 
-**Use GitHub Codespaces**
+- `/src`: Código fonte da aplicação
+  - `/components`: Componentes React reutilizáveis
+  - `/pages`: Páginas da aplicação
+  - `/styles`: Arquivos de estilo
+  - `/utils`: Funções utilitárias
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Contribuindo
 
-## What technologies are used for this project?
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
 
-This project is built with:
+## Licença
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8f8029bc-255e-4bb9-9a8f-33e1e015d3ba) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este projeto está sob a licença MIT.
